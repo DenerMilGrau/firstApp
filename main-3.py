@@ -1,4 +1,5 @@
 import flet as ft
+from flet.core.types import MainAxisAlignment
 
 
 def main(page: ft.Page):
@@ -87,15 +88,22 @@ def main(page: ft.Page):
         ft.Column(
             [
             ft.ResponsiveRow(
-                [input_num1, input_num2]
+                [input_num1, input_num2],
+
             ),
             ft.ResponsiveRow(
-                [btn_soma, btn_sub]
+                [btn_soma, btn_sub],
+                alignment=MainAxisAlignment.CENTER,
+
             ),
             ft.ResponsiveRow(
-                [btn_mult, btn_div]
+                [btn_mult, btn_div],
+                alignment=MainAxisAlignment.CENTER,
             ),
-            txt_resultado
+            ft.ResponsiveRow(
+                [txt_resultado],
+                alignment=MainAxisAlignment.CENTER,
+            )
             ]
         )
     )

@@ -4,7 +4,7 @@ from datetime import date
 def main(page: ft.Page):
 
     # Configuração da página
-    page.title = 'Atividade 3'
+    page.title = 'Atividade 4'
     page.theme_mode = ft.ThemeMode.DARK
     page.window.width = 375
     page.window.height = 667
@@ -22,19 +22,31 @@ def main(page: ft.Page):
                     ano = '{}'.format(data_nasc[6:])
 
                     data_atual = date.today()
-                    idade = data_atual.year - int(ano)
-                    print('idade: {}'.format(idade))
-                    if data_atual.month < int(mes):
-                        print('if idade')
-                        idade -= 1
+
+                    if int(mes) < 0 or int(ano) < 0 or int(dia) < 0 or int(mes) > 12 or int(dia) > 31 or int(ano) > data_atual.year:
+                        raise ValueError
                     else:
-                        print('else')
-                        if data_atual.day < int(dia):
-                            print('if idade 2')
-                            idade -= 1
-                            print('idade segunda vez: {}'.format(idade))
-                    txt_resultado.value = (f'IDADE: {str(idade)}\n'
-                                           f'{'Menor' if idade < 18 else 'Maior'} de idade')
+                        if int(ano) == data_atual.year and int(mes) > data_atual.month:
+                            raise ValueError
+                        elif int(ano) == data_atual.year and int(mes) == data_atual.month and int(dia) > data_atual.day:
+                            raise ValueError
+                        else:
+                            idade = data_atual.year - int(ano)
+                            print('idade: {}'.format(idade))
+                            if idade > 120:
+                                raise ValueError
+                            else:
+                                if data_atual.month < int(mes):
+                                    print('if idade')
+                                    idade -= 1
+                                else:
+                                    print('else')
+                                    if data_atual.day < int(dia):
+                                        print('if idade 2')
+                                        idade -= 1
+                                        print('idade segunda vez: {}'.format(idade))
+                                txt_resultado.value = (f'IDADE: {str(idade)}\n'
+                                                       f'{'Menor' if idade < 18 else 'Maior'} de idade')
             else:
                 print('else')
                 txt_resultado.value = 'data invalida'
