@@ -62,7 +62,6 @@ def main(page: ft.Page):
             msg_sucesso.open = True
 
         print("Atualizou")
-        input_nome.value = 'TESTEEEEE'
         page.update()
 
     def exibir_lista(e):
