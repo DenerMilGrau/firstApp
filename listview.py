@@ -1,6 +1,7 @@
 import flet as ft
 from flet import AppBar, Text, View
 from flet.core.colors import Colors
+from objeto import Pessoa
 
 
 def main(page: ft.Page):
@@ -12,8 +13,8 @@ def main(page: ft.Page):
 
     # Funções
     def gerencia_rotas(e):
-        exibir_lista(e)
         page.views.clear()
+        exibir_lista()
         page.views.append(
             View(
                 "/",
@@ -24,7 +25,7 @@ def main(page: ft.Page):
                 ],
             )
         )
-        if page.route == "/adicionar":
+        if page.route == "/adicionar" or page.route == "/detalhes":
             txt.value = ''
             page.views.append(
                 View(
@@ -32,10 +33,30 @@ def main(page: ft.Page):
                     [
                         AppBar(title=Text("Cadastro"), bgcolor=Colors.PRIMARY_CONTAINER),
                         input_nome,
+                        input_profissao,
+                        input_salario,
                         ft.Button(text='Salvar', on_click=lambda _: salvar_nome(e)),
                         ft.Button(text='Exibir', on_click=lambda _: page.go('/'))
 
                     ],
+                )
+            )
+        elif page.route == "/detalhes":
+            page.views.append(
+                View(
+                    '/detalhes',
+                    [
+                        AppBar(title=Text("Cadastro"), bgcolor=Colors.PRIMARY_CONTAINER),
+                        ft.Container(
+                            content=ft.Column(
+                                [
+                                    txt_nome,
+                                    txt_profissao,
+                                    txt_salario,
+                                ]
+                            )
+                        )
+                    ]
                 )
             )
         page.update()
@@ -47,40 +68,62 @@ def main(page: ft.Page):
 
     # ************************************************************************
     # ************************************************************************
-    lista_nomes = []
+    lista_pessoas = []
 
     def salvar_nome(e):
         print("passou")
-        if input_nome.value == '':
+        if input_nome.value == '' or input_profissao.value == '' or input_salario.value == '':
+
             page.overlay.append(msg_error)
             msg_error.open = True
             print("vazio")
+            page.update()
         else:
-            lista_nomes.append(input_nome.value)
+            print('else')
+            pessoa = Pessoa(input_nome.value, input_profissao.value, input_salario.value)
+            lista_pessoas.append(pessoa)
             input_nome.value = ""
+            input_profissao.value = ""
+            input_salario.value = ""
             page.overlay.append(msg_sucesso)
             msg_sucesso.open = True
+            page.update()
 
         print("Atualizou")
-        page.update()
 
-    def exibir_lista(e):
+    def exibir_lista():
         lv_nome.controls.clear()
+        page.overlay.clear()
         txt.value = ''
-        if lista_nomes:
-            for nome in lista_nomes:
+        if lista_pessoas:
+            print('if exibir')
+            for pessoa in lista_pessoas:
+                # print(nome)
+                print(pessoa.nome)
                 lv_nome.controls.append(
                     ft.ListTile(
                         leading=ft.Icon(ft.Icons.PERSON),
-                        title=ft.Text(value=nome),
-                        subtitle=ft.Text('User'),
-
+                        title=ft.Text(value=pessoa.nome),
+                        subtitle=ft.Text(value=pessoa.profissao),
+                        trailing=ft.Button(
+                            ft.Icons.INFO,
+                            on_click=lambda _: exibir_detalhes(pessoa.nome, pessoa.profissao, pessoa.salario)
+                        ),
                     ),
                 )
+            page.update()
         else:
             txt.value = 'Não existem dados adicionados ainda'
             page.overlay.append(txt)
+
+        print('update')
         page.update()
+
+    def exibir_detalhes(nome, profissao, salario):
+        txt_nome.value = nome
+        txt_profissao.value = profissao
+        txt_salario.value = salario
+        page.go('/detalhes')
 
     # Componentes
     lv_nome = ft.ListView(
@@ -89,6 +132,13 @@ def main(page: ft.Page):
         divider_thickness=1
     )
     input_nome = ft.TextField(label="Nome:")
+    input_profissao = ft.TextField(label="Profissão:")
+    input_salario = ft.TextField(label="Salario:")
+
+    txt_nome = ft.Text()
+    txt_profissao = ft.Text()
+    txt_salario = ft.Text()
+
     msg_sucesso = ft.SnackBar(
         content=ft.Text('Salvo com sucesso!'),
         bgcolor="green",
