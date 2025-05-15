@@ -1,0 +1,3 @@
+Acho que estava com problemas na navegação por que chamava funções em lugares inadequados,
+além disso com o page.go() acho que ele não adiciona ao page.views,
+quero testar se ao alterar a page.route manualmente ele verifica on_route_change e manda para gerenciar_rotas
