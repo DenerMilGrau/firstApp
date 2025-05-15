@@ -16,12 +16,13 @@ def main(page: ft.Page):
     def pagina_inicial():
         db_session = local_session()
         try:
-            select_usuario = select(Pessoa)
-            pessoa = db_session.execute(select_usuario).scalars()
+            select_pessoa = select(Pessoa)
+            pessoa = db_session.execute(select_pessoa).scalars()
             resultado = []
             for p in pessoa:
                 resultado.append(p.serialize_pessoa())
-            if not select:
+            print(resultado)
+            if not resultado:
                 txt.value = 'Sem dados'
                 page.overlay.clear()
                 page.overlay.append(txt)
@@ -39,12 +40,13 @@ def main(page: ft.Page):
                     )
             page.update()
             page.views.clear()
-            page.go('/exibir')
         except Exception as e:
             print(e)
         finally:
             page.update()
             db_session.close()
+            page.go('/exibir')
+
 
     def salvar_nome():
         db_session = local_session()
@@ -93,8 +95,8 @@ def main(page: ft.Page):
                         input_nome,
                         input_profissao,
                         input_salario,
-                        ft.Button(text='Salvar', on_click=lambda _: salvar_nome(e)),
-                        ft.Button(text='Exibir', on_click=lambda _: pagina_inicial(e))
+                        ft.Button(text='Salvar', on_click=lambda _: salvar_nome()),
+                        ft.Button(text='Exibir', on_click=lambda _: pagina_inicial())
 
                     ],
                 )
