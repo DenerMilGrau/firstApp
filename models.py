@@ -44,6 +44,14 @@ class Livro(Base):
     titulo = Column(String, nullable=False)
     descricao = Column(String)
 
+    def save(self, db_session):
+        try:
+            db_session.add(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise
+
 def init_db():
     Base.metadata.create_all(bind=engine)
 
