@@ -4,6 +4,7 @@ from flet.core.colors import Colors
 from models import Pessoa, Livro, local_session
 from sqlalchemy import select
 
+
 def main(page: ft.Page):
     # Configurações
     page.title = "Exemplo de listas"
@@ -30,12 +31,14 @@ def main(page: ft.Page):
                 txt.value = ''
                 page.overlay.clear()
                 print('select')
-                for p in pessoa:
+                lv_pessoa.controls.clear()
+                for p in resultado:
+                    print(p['nome'])
                     lv_pessoa.controls.append(
                         ft.ListTile(
                             leading=ft.Icon(ft.Icons.PERSON),
-                            title=ft.Text(value=p.nome),
-                            subtitle=ft.Text(value=p.profissao),
+                            title=ft.Text(value=p['nome']),
+                            subtitle=ft.Text(value=p['profissao']),
                         )
                     )
             page.update()
@@ -50,6 +53,7 @@ def main(page: ft.Page):
 
     def salvar_nome():
         db_session = local_session()
+        lv_pessoa.controls.clear()
         try:
             form_add = Pessoa(nome=input_nome.value,
                               profissao=input_profissao.value,
@@ -57,6 +61,9 @@ def main(page: ft.Page):
             form_add.save(db_session)
             page.overlay.append(msg_sucesso)
             msg_sucesso.open = True
+            input_nome.value = ''
+            input_profissao.value = ''
+            input_salario.value = ''
         except Exception as e:
             print(e)
             page.overlay.append(msg_error)
@@ -64,29 +71,36 @@ def main(page: ft.Page):
         finally:
             page.update()
             db_session.close()
+            page.go('/adicionar1')
+
+
 
     #  **********************************************
     # *************************************************
-
     def gerencia_rotas(e):
         page.views.clear()
 
         if page.route == '/':
             pagina_inicial()
 
-        if page.route == '/exibir' or page.route == '/adicionar':
+        elif page.route == '/exibir':
             page.views.append(
                 View(
                     '/exibir',
                     [
                         AppBar(title=Text("Exibir"), bgcolor=Colors.PRIMARY_CONTAINER),
+                        lv_pessoa,
                         ft.FloatingActionButton(icon=ft.Icons.ADD, on_click=lambda _: page.go('/adicionar')),
-                        lv_pessoa
+
                     ]
                 )
             )
+        elif page.route == '/adicionar1':
+            page.go('/adicionar')
 
-        elif page.route == "/adicionar" or page.route == "/detalhes":
+        elif page.route == "/adicionar":
+            print('\nVIEW ADICIONAR\n')
+            txt.value=''
             page.views.append(
                 View(
                     "/adicionar",
